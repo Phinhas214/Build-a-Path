@@ -19,8 +19,8 @@ let config = {
     render: {
         pixelArt: true  // prevent pixel art from getting blurred when scaled
     },
-    width: 1000,
-    height: 800,
+    width: 800,
+    height: 600,
     scene: [Path]
 }
 

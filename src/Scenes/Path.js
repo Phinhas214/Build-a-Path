@@ -1,3 +1,6 @@
+
+
+let rum_mode_active = false;
 class Path extends Phaser.Scene {
     // Class variable definitions -- these are all "undefined" to start
     graphics;
@@ -21,7 +24,7 @@ class Path extends Phaser.Scene {
         this.points = [
             20, 20,
             80, 400,
-            300, 750
+            300, 550
         ];
         this.curve = new Phaser.Curves.Spline(this.points);
 
@@ -94,8 +97,11 @@ class Path extends Phaser.Scene {
             // * Add code to check if run mode is active
             //   If run mode is active, then don't call clearPoints()
             //   (i.e., can only clear points when not in run mode)
+            if(rum_mode_active != true) {
+                this.clearPoints();
+            }
 
-            this.clearPoints();
+            
 
         }
 
@@ -115,6 +121,12 @@ class Path extends Phaser.Scene {
             //  point0.x, point0.y,
             //  point1.x, point1.y
             // ]
+            let counter = 0;
+            let points_array = [];
+            for (let point of this.curve.points) {
+                points_array.push(point.x, point.y);
+            }
+            console.log(points_array);
         }   
 
         if (Phaser.Input.Keyboard.JustDown(this.rKey)) {
@@ -149,6 +161,37 @@ class Path extends Phaser.Scene {
             //     rotateToPath: true,
             //     rotationOffset: -90
             // }
+
+            if(rum_mode_active == true) {
+                my.sprite.enemyShip.stopFollow();
+                my.sprite.enemyShip.visible = false;
+                my.sprite.enemyShip.mode = false;
+                rum_mode_active = false;
+            }
+            else if(rum_mode_active == false) {
+                my.sprite.enemyShip.mode = true;
+                if(this.curve.points) {
+                    my.sprite.enemyShip.x = this.curve.points[0].x;
+                    my.sprite.enemyShip.y = this.curve.points[0].y;
+                }
+                my.sprite.enemyShip.visible = true;
+
+                let follow_arg = 
+                {
+                    from: 0,
+                    to: 1,
+                     delay: 0,
+                    duration: 2000,
+                    ease: 'Sine.easeInOut',
+                    repeat: -1,
+                    yoyo: true,
+                    rotateToPath: true,
+                    rotationOffset: -90
+                };
+                my.sprite.enemyShip.startFollow(follow_arg);
+
+                rum_mode_active = true;
+            }
         }
 
     }
